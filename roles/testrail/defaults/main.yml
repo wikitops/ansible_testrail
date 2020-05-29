@@ -1,0 +1,49 @@
+---
+
+###
+# TESTRAIL
+###
+
+# Version
+testrail_version: 6.2
+
+# Directories
+testrail_conf_dir: /data/testrail/conf
+testrail_opt_dir: /data/testrail/opt
+testrail_database_dir: /data/testrail/database
+
+###
+# DOCKER
+###
+
+# Network
+testrail_docker_network:
+  name: testrail
+  state: present
+
+# Testrail docker container
+testrail_docker:
+  name: testrail
+  image: testrail/apache:{{ testrail_version }}
+  state: started
+  network: "{{ testrail_docker_network.name }}"
+  ports:
+    - 8000:80
+  volumes:
+    - "{{ testrail_conf_dir }}:/var/www/testrail/config/"
+    - "{{ testrail_opt_dir }}:/opt/testrail"
+
+# Testrail database container
+testrail_database:
+  env:
+    MYSQL_USER: "testrail"
+    MYSQL_PASSWORD: "testrail"
+    MYSQL_DATABASE: "testrail"
+    MYSQL_ROOT_PASSWORD: "my-secret-password"
+    MYSQL_ALLOW_EMPTY_PASSWORD: 'false'
+  name: db
+  image: testrail/mysql:latest
+  state: started
+  network: "{{ testrail_docker_network.name }}"
+  volumes:
+    - "{{ testrail_database_dir }}:/var/lib/mysql"

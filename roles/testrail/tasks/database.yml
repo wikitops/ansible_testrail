@@ -1,0 +1,22 @@
+---
+
+- name: TESTRAIL DATABASE | Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  loop:
+    - "{{ testrail_database_dir }}"
+
+- name: TESTRAIL ON DOCKER | Deploy the database
+  docker_container:
+    env: "{{ testrail_database.env }}"
+    name: "{{ testrail_database.name }}"
+    image: "{{ testrail_database.image }}"
+    state: "{{ testrail_database.state }}"
+    restart: yes
+    networks:
+      - name: "{{ testrail_database.network }}"
+    volumes: "{{ testrail_database.volumes }}"

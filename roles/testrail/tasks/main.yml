@@ -1,0 +1,7 @@
+---
+
+- name: TESTRAIL | Deploy the container
+  include_tasks: docker.yml
+
+- name: TESTRAIL | Deploy the container
+  include_tasks: database.yml

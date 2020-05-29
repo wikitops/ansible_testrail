@@ -1,0 +1,28 @@
+---
+
+- name: TESTRAIL DOCKER | Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  loop:
+    - "{{ testrail_conf_dir }}"
+    - "{{ testrail_opt_dir }}"
+
+- name: TESTRAIL DOCKER | Create the network
+  docker_network:
+    name: "{{ testrail_docker_network.name }}"
+    state: "{{ testrail_docker_network.state }}"
+
+- name: TESTRAIL DOCKER | Deploy the application
+  docker_container:
+    name: "{{ testrail_docker.name }}"
+    image: "{{ testrail_docker.image }}"
+    state: "{{ testrail_docker.state }}"
+    restart: yes
+    networks:
+      - name: "{{ testrail_docker.network }}"
+    ports: "{{ testrail_docker.ports }}"
+    volumes: "{{ testrail_docker.volumes }}"
